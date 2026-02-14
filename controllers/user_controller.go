@@ -74,7 +74,7 @@ func (ctrl *UserController) CheckBalance(ctx *gin.Context) {
 		return
 	}
 
-	balance, err := ctrl.userService.CheckBalance()
+	balance, err := ctrl.userService.CheckBalance(uint(id))
 	if err != nil {
 		ctx.JSON(500, gin.H{"error": err})
 		return

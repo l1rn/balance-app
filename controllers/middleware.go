@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -11,15 +10,13 @@ import (
 
 func AuthMiddleware(requiredRole string) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		authHeader := ctx.GetHeader("Authorization")
-		if authHeader == "" {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Auth header required"})
+		cookie, err := ctx.Cookie("token")
+		if err != nil {
+			ctx.AbortWithStatusJSON(401, gin.H{"error": "Cookie auth required"})
 			return
 		}
 
-		tokenString := strings.Split(authHeader, "Bearer")[1]
-
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(cookie, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method")
 			}

@@ -25,6 +25,7 @@ type User struct {
 type UserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Role     Role   `json:"role"`
 }
 
 type TopUpRequest struct {
@@ -68,7 +69,7 @@ func (s *userService) FindById(id uint) (*User, error) {
 }
 
 func (s *userService) AddUser(req UserRequest) error {
-	user := User{Username: req.Username, Password: req.Password}
+	user := User{Username: req.Username, Password: req.Password, Role: req.Role}
 	return s.db.Create(&user).Error
 }
 
@@ -90,13 +91,30 @@ func (s *userService) TopUpBalanceByUserId(id uint, amount int64) error {
 	})
 }
 
+func (s *userService) WithdrawBalanceByUserId(id uint, amount int64) error {
+	if amount <= 0 {
+		fmt.Errorf("amount must be positive")
+	}
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		var user User
+		if err := tx.First(&user, id).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&user).Update("balance", user.Balance-amount).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
 func (s *userService) CheckBalance(userId uint) (*int64, error) {
 	var user User
 	err := s.db.First(&user, userId).Error
 	if err != nil {
 		return nil, err
 	}
-	return user.Balance, nil
+	return &user.Balance, nil
 }
 
 func (u *User) BeforeSave(tx *gorm.DB) (err error) {
