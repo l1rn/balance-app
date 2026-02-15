@@ -30,6 +30,7 @@ func main() {
 
 	err = db.AutoMigrate(
 		&services.User{},
+		&services.TransactionItem{},
 	)
 
 	if err != nil {
@@ -79,6 +80,7 @@ func main() {
 	admin.Use(controllers.AuthMiddleware("admin"))
 	{
 		admin.GET("/all-users", userCtrl.GetAllUsers)
+		admin.GET("/check-balance/:id", userCtrl.CheckBalance)
 		admin.POST("/create-user", userCtrl.CreateUser)
 		admin.POST("/top-up", userCtrl.TopUpBalance)
 	}

@@ -1,11 +1,18 @@
 <template>
-  <LoginModal />
-  <UserBalanceList />
+  <MainHeader />
+  <RouterView />
 </template>
 <script setup>
-import LoginModal from './components/LoginModal.vue';
-import UserBalanceList from './components/UserBalanceList.vue';
+import { onMounted } from 'vue';
+import { useAuthStore } from './store/authStore';
+import api from './api';
+import MainHeader from './components/MainHeader.vue';
 
+
+const authStore = useAuthStore();
+onMounted(async() => {
+  
+})
 </script>
 
 <style scoped>

@@ -9,7 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
-var SecretKey = []byte("super_key")
+var s, _ = os.LookupEnv("JWT_SECRET")
+var SecretKey = []byte(s)
 
 func SeedAdmin(s UserService) {
 	user, exists := os.LookupEnv("ADMIN_USERNAME")
@@ -26,7 +27,7 @@ func SeedAdmin(s UserService) {
 	request := UserRequest{
 		Username: user,
 		Password: pass,
-		Role: RoleAdmin,
+		Role:     RoleAdmin,
 	}
 
 	s.AddUser(request)

@@ -1,0 +1,35 @@
+<template>
+    <div class="header-wrapper">
+        <div class="header-container">
+            <h1>Balance Handler 💸</h1>
+        </div>
+        <div class="button-container">
+            <button @click="logoutHandle">quit</button>
+        </div>
+    </div>
+</template>
+
+<script setup>
+import api from '../api';
+import { useAuthStore } from '../store/authStore';
+
+const authStore = useAuthStore()
+const logoutHandle = async() => {
+    await api.post("/auth/logout")
+}
+</script>
+
+<style scoped>
+.header-wrapper {
+    height: 80px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-container {
+    position: absolute;
+    right: 10px;
+}
+</style>

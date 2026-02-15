@@ -16,16 +16,25 @@ const (
 
 type User struct {
 	gorm.Model
-	Username string `gorm:"unique;not null" json:"username"`
-	Password string `gorm:"not null" json:"password"`
-	Role     Role   `gorm:"type:varchar(20);default:'user'" json:"role"`
-	Balance  int64  `gorm:"default:0" json:"balance"`
+	Username     string            `gorm:"unique;not null"`
+	Password     string            `gorm:"not null"`
+	Role         Role              `gorm:"type:varchar(20);default:'user'"`
+	Balance      int64             `gorm:"default:0"`
+	Transactions []TransactionItem `gorm:"foreignKey:UserID" `
 }
 
 type UserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Role     Role   `json:"role"`
+}
+
+type UserResponse struct {
+	ID           uint                  `json:"id"`
+	Username     string                `json:"username"`
+	Role         Role                  `json:"role"`
+	Balance      int64                 `json:"balance"`
+	Transactions []TransactionResponse `json:"transactions"`
 }
 
 type TopUpRequest struct {
@@ -35,7 +44,7 @@ type TopUpRequest struct {
 }
 
 type UserService interface {
-	FindAll() ([]User, error)
+	FindAll() ([]UserResponse, error)
 	FindById(id uint) (*User, error)
 	TopUpBalanceByUserId(userId uint, amount int64) error
 	CheckBalance(userId uint) (*int64, error)
@@ -50,13 +59,22 @@ func NewUserService(db *gorm.DB) UserService {
 	return &userService{db: db}
 }
 
-func (s *userService) FindAll() ([]User, error) {
+func (s *userService) FindAll() ([]UserResponse, error) {
 	var users []User
 	err := s.db.Find(&users).Error
 	if err != nil {
 		return nil, err
 	}
-	return users, nil
+	var response []UserResponse
+	for _, u := range users {
+		response = append(response, UserResponse{
+			ID:       u.ID,
+			Username: u.Username,
+			Role:     u.Role,
+			Balance:  u.Balance,
+		})
+	}
+	return response, nil
 }
 
 func (s *userService) FindById(id uint) (*User, error) {
@@ -87,6 +105,16 @@ func (s *userService) TopUpBalanceByUserId(id uint, amount int64) error {
 		if err := tx.Model(&user).Update("balance", user.Balance+amount).Error; err != nil {
 			return err
 		}
+
+		transaction := TransactionItem{
+			UserID: id,
+			Amount: amount,
+			Type:   TopUp,
+		}
+
+		if err := tx.Create(&transaction).Error; err != nil {
+			return err
+		}
 		return nil
 	})
 }
@@ -102,6 +130,15 @@ func (s *userService) WithdrawBalanceByUserId(id uint, amount int64) error {
 		}
 
 		if err := tx.Model(&user).Update("balance", user.Balance-amount).Error; err != nil {
+			return err
+		}
+		transaction := TransactionItem{
+			UserID: id,
+			Amount: amount,
+			Type:   Withdraw,
+		}
+
+		if err := tx.Create(&transaction).Error; err != nil {
 			return err
 		}
 		return nil
