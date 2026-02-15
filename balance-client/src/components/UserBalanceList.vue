@@ -19,7 +19,7 @@
                     <td>
                         <button>plus</button>
                         <button>minus</button>
-                        <button>edit</button>
+                        <button @click="$router.push(`/users/${u.id}`)">full</button>
                     </td>
                 </tr>
             </table>
@@ -34,7 +34,7 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import api from '../api';
+import api from '../common/api';
 
 const users = ref({})
 const handleAllUsers = async() => {

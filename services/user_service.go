@@ -47,6 +47,7 @@ type UserService interface {
 	FindAll() ([]UserResponse, error)
 	FindById(id uint) (*User, error)
 	TopUpBalanceByUserId(userId uint, amount int64) error
+	WithdrawBalanceByUserId(userId uint, amount int64) error
 	CheckBalance(userId uint) (*int64, error)
 	AddUser(req UserRequest) error
 }
@@ -102,7 +103,7 @@ func (s *userService) TopUpBalanceByUserId(id uint, amount int64) error {
 			return err
 		}
 
-		if err := tx.Model(&user).Update("balance", user.Balance+amount).Error; err != nil {
+		if err := tx.Model(&user).Update("balance", gorm.Expr("balance + ?", amount)).Error; err != nil {
 			return err
 		}
 
@@ -121,7 +122,7 @@ func (s *userService) TopUpBalanceByUserId(id uint, amount int64) error {
 
 func (s *userService) WithdrawBalanceByUserId(id uint, amount int64) error {
 	if amount <= 0 {
-		fmt.Errorf("amount must be positive")
+		return fmt.Errorf("amount must be positive")
 	}
 	return s.db.Transaction(func(tx *gorm.DB) error {
 		var user User
@@ -129,7 +130,7 @@ func (s *userService) WithdrawBalanceByUserId(id uint, amount int64) error {
 			return err
 		}
 
-		if err := tx.Model(&user).Update("balance", user.Balance-amount).Error; err != nil {
+		if err := tx.Model(&user).Update("balance", gorm.Expr("balance - ?", amount)).Error; err != nil {
 			return err
 		}
 		transaction := TransactionItem{

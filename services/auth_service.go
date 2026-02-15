@@ -30,7 +30,26 @@ func SeedAdmin(s UserService) {
 		Role:     RoleAdmin,
 	}
 
+	user1, _ := os.LookupEnv("USERNAME1")
+	pwd1, _ := os.LookupEnv("USERNAME1")
+	user2, _ := os.LookupEnv("USERNAME2")
+	pwd2, _ := os.LookupEnv("USERNAME2")
+
+	request1 := UserRequest{
+		Username: user1,
+		Password: pwd1,
+		Role:     RoleUser,
+	}
+
+	request2 := UserRequest{
+		Username: user2,
+		Password: pwd2,
+		Role:     RoleUser,
+	}
+
 	s.AddUser(request)
+	s.AddUser(request1)
+	s.AddUser(request2)
 }
 
 func Login(db *gorm.DB, username, password string) (string, error) {

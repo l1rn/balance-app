@@ -37,7 +37,28 @@ func (ctrl *UserController) TopUpBalance(ctx *gin.Context) {
 	err := ctrl.userService.TopUpBalanceByUserId(req.UserId, req.Amount)
 	if err != nil {
 		ctx.JSON(500, gin.H{
-			"error": err,
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"message": "Balance was updated",
+	})
+}
+
+func (ctrl *UserController) WithdrawBalance(ctx *gin.Context) {
+	var req services.TopUpRequest
+	if err := ctx.ShouldBindBodyWithJSON(&req); err != nil {
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	err := ctrl.userService.WithdrawBalanceByUserId(req.UserId, req.Amount)
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}

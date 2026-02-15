@@ -1,5 +1,6 @@
 <template>
     <div class="input-wrapper">
+        <h1>Authentication</h1>
         <div class="input-container">
             <input type="text" v-model="username">
             <input type="text" v-model="password">
@@ -9,9 +10,8 @@
 </template>
 <script setup>
 import { ref } from 'vue';
-import api from '../api';
+import api from '../common/api';
 import { useAuthStore } from '../store/authStore';
-import { useRouter } from 'vue-router';
 import { router } from '../common/router';
 
 const username = ref("")
@@ -35,6 +35,18 @@ const loginHandle = async() => {
 </script>
 <style scoped>
 .input-wrapper {
-    
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+.input-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 2rem;
+    background: #2c2c2c;
+    border-radius: 8px;
 }
 </style>

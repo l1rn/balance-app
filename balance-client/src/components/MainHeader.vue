@@ -1,7 +1,7 @@
 <template>
     <div class="header-wrapper">
         <div class="header-container">
-            <h1>Balance Handler 💸</h1>
+            <h1 @click="$router.push('/main')">Balance Handler 💸</h1>
         </div>
         <div class="button-container">
             <button @click="logoutHandle">quit</button>
@@ -10,7 +10,7 @@
 </template>
 
 <script setup>
-import api from '../api';
+import api from '../common/api';
 import { useAuthStore } from '../store/authStore';
 
 const authStore = useAuthStore()
@@ -31,5 +31,9 @@ const logoutHandle = async() => {
 .button-container {
     position: absolute;
     right: 10px;
+}
+
+h1 {
+    cursor: pointer;
 }
 </style>

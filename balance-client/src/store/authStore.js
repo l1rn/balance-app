@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia' 
 import { ref} from 'vue'
-import api from '../api'
+import api from '../common/api'
  
 export const useAuthStore = defineStore('auth_store', () => {
     const isAdmin = ref(false)

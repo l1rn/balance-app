@@ -29,7 +29,7 @@ type TransactionRequest struct {
 
 type TransactionResponse struct {
 	Username  string          `json:"username"`
-	Amount    int64           `json:amount`
+	Amount    int64           `json:"amount"`
 	Type      TransactionType `json:"type"`
 	CreatedAt time.Time       `json:"created_at"`
 }
@@ -72,6 +72,7 @@ func (s *transactionService) GetUserWithHistory(id uint) (UserResponse, error) {
 		ID:           user.ID,
 		Username:     user.Username,
 		Role:         user.Role,
+		Balance:      user.Balance,
 		Transactions: tResponse,
 	}
 	return response, err
