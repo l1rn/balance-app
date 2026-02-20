@@ -4,32 +4,25 @@ import api from '../common/api'
  
 export const useAuthStore = defineStore('auth_store', () => {
     const isAdmin = ref(false)
-    const isAuth = ref(false)
+    const isAuthenticated = ref(null)
 
-    const confirmAuth = () => {
-        isAuth.value = true;
-    }
-
-    const confirmLougout = () => {
-        isAuth.value = false;
+    const setAuthorization = (value) => {
+        isAuthenticated.value = value;
     }
 
     const checkAuth = async() => {
         const r = await api.get("/admin/check-balance/1");
         if(r.status === 200){
-            confirmAuth()
-            return true
+            setAuthorization(true)
         } else {
-            confirmLougout()
-            return false
+            setAuthorization(false)
         }
     }
 
     return {
         isAdmin,
-        isAuth,
-        confirmAuth,
-        confirmLougout,
+        isAuthenticated,
+        setAuthorization,
         checkAuth
     }
 })

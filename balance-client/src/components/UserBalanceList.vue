@@ -16,25 +16,27 @@
                     <td>{{ u.username }}</td>
                     <td>{{ u.role }}</td>
                     <td>{{ u.balance }}</td>
-                    <td>
-                        <button>plus</button>
-                        <button>minus</button>
-                        <button @click="$router.push(`/users/${u.id}`)">full</button>
+                    <td class="action-cell">
+                        <ButtonBase :icon="addIcon"/>
+                        <ButtonBase :icon="removeIcon" />
+                        <ButtonBase 
+                        @click="$router.push(`/users/${u.id}`)" 
+                        :icon="userIcon"/>
                     </td>
                 </tr>
             </table>
         </div>
         <div class="button-content">
-            <button>
-                plus
-            </button>
+            <ButtonBase :icon="addIcon"/>
         </div>
     </div>
 </template>
 
 <script setup>
+import ButtonBase from './ButtonBase.vue';
 import { onMounted, ref } from 'vue';
 import api from '../common/api';
+import { addIcon, removeIcon, userIcon } from '../main';
 
 const users = ref({})
 const handleAllUsers = async() => {
@@ -88,6 +90,12 @@ tr td {
     text-align: center;
 }
 
+.action-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+}
 tr:first-child td:first-child {
     border-radius: 8px 0 0 0;
 }

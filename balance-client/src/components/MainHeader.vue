@@ -4,7 +4,9 @@
             <h1 @click="$router.push('/main')">Balance Handler 💸</h1>
         </div>
         <div class="button-container">
-            <button @click="logoutHandle">quit</button>
+            <ButtonBase 
+            title="Quit"
+            @click="logoutHandle"/>
         </div>
     </div>
 </template>
@@ -12,10 +14,11 @@
 <script setup>
 import api from '../common/api';
 import { useAuthStore } from '../store/authStore';
+import ButtonBase from './ButtonBase.vue';
 
 const authStore = useAuthStore()
-const logoutHandle = async() => {
-    await api.post("/auth/logout")
+const logoutHandle = () => {
+    document.cookie = "token=null; max-age=0; path=/;"
 }
 </script>
 

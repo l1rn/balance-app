@@ -4,6 +4,10 @@ import App from './App.vue'
 import { createPinia } from 'pinia'
 import { router } from './common/router'
 
+export { default as addIcon } from "./assets/add.svg";
+export { default as removeIcon } from "./assets/remove.svg" 
+export { default as userIcon } from "./assets/user.svg"
+
 const app = createApp(App)
 const pinia = createPinia()
 

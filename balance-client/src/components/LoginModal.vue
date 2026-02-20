@@ -2,9 +2,25 @@
     <div class="input-wrapper">
         <h1>Authentication</h1>
         <div class="input-container">
-            <input type="text" v-model="username">
-            <input type="text" v-model="password">
-            <button @click="loginHandle">Login</button>
+            <div class="input-group">
+                <div>
+                    Username
+                </div>
+                <InputBase 
+                type="text" 
+                placeholder="username" 
+                v-model="username" />
+            </div>
+            <div class="input-group">
+                <div>
+                    Password
+                </div>
+                <InputBase 
+                type="password" 
+                placeholder="password" 
+                v-model="password" />
+            </div>
+            <ButtonBase @click="loginHandle" title="Login"/>
         </div>
     </div>
 </template>
@@ -13,6 +29,8 @@ import { ref } from 'vue';
 import api from '../common/api';
 import { useAuthStore } from '../store/authStore';
 import { router } from '../common/router';
+import InputBase from './InputBase.vue';
+import ButtonBase from './ButtonBase.vue';
 
 const username = ref("")
 const password = ref("")
@@ -21,12 +39,11 @@ const authStore = useAuthStore();
 
 const loginHandle = async() => {
     try {
-        const response = await api.post("/auth/login", {
+        await api.post("/auth/login", {
             "username": username.value,
             "password": password.value,
         });
-        console.log("success:", (response.data))
-        authStore.confirmAuth()
+        authStore.setAuthorization(true)
         router.push("/main")
     } catch(e){
         console.error(e)
@@ -39,14 +56,27 @@ const loginHandle = async() => {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    color: white;
+    width: 100%;
 }
 .input-container {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 2rem;
+    width: 80%;
     background: #2c2c2c;
     border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.input-group div {
+    font-size: 18px;
+    text-indent: 0.1rem;
+    font-weight: bold;
 }
 </style>

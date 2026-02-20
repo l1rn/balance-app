@@ -12,7 +12,7 @@ import (
 	"github.com/l1rn/balance-app/controllers"
 	"github.com/l1rn/balance-app/services"
 	"gorm.io/gorm"
-)	
+)
 
 func main() {
 	err := godotenv.Load()
@@ -41,7 +41,7 @@ func main() {
 	r := gin.Default()
 
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"https://30c9-2a09-bac5-3b6c-16b4-00-243-7c.ngrok-free.app", "http://localhost:5173"},
+		AllowOrigins:     []string{"https://balance.lirn-dev.ru", "http://localhost:5173"},
 		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		AllowCredentials: true,
@@ -93,18 +93,18 @@ func main() {
 			admin.GET("/users/:id", transactionCtrl.GetUserHistory)
 		}
 	}
-	
+
 	r.Static("/assets", "./dist/assets")
-	r.StaticFile("/favicon.ico", "./dist/favicon.ico")		
+	r.StaticFile("/favicon.ico", "./dist/favicon.ico")
 	r.StaticFile("/", "./dist/index.html")
-	
+
 	r.NoRoute(func(c *gin.Context) {
-    	path := c.Request.URL.Path
+		path := c.Request.URL.Path
 		if strings.HasPrefix(path, "/api") {
 			c.JSON(404, gin.H{"error": "API route not found"})
 			return
 		}
-    	c.File("./dist/index.html")
+		c.File("./dist/index.html")
 	})
 	r.Run(":8080")
 }

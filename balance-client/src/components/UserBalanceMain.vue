@@ -13,23 +13,24 @@
                 </div>
                 <div class="action-container">
                     <div class="button-group">
-                        <button 
-                        @click="setMode('plus')"
-                        :class="{ active: currentMode === 'plus'}">
-                            plus
-                        </button>
-                        <button 
-                        @click="setMode('minus')"
-                        :class="{ active: currentMode === 'minus'}">
-                            minus
-                        </button>
-                        <button>edit</button>
+                        <ButtonBase 
+                            @click="setMode('plus')"
+                            :icon="addIcon"
+                            :class="{ active: currentMode === 'plus'}"
+                        />
+                        <ButtonBase 
+                            :icon="removeIcon"
+                            @click="setMode('minus')"
+                            :class="{ active: currentMode === 'minus'}"
+                        />
+                        <ButtonBase title="edit"/>
                     </div>
                     <div v-if="currentMode" class="amount-container">
-                        <input type="text" v-model="amount">
-                        <button @click="handleConfirm" class="confirm-btn">
-                            {{ currentMode === 'plus' ? 'Add Funds' : 'Withdraw' }}
-                        </button>
+                        <InputBase type="text" v-model="amount"/>
+                        <ButtonBase 
+                            :title="currentMode === 'plus' ? 'Add Funds' : 'Withdraw'"
+                            @click="handleConfirm"  
+                        />
                     </div>
                 </div>
             </div>
@@ -68,6 +69,9 @@
 import { onMounted, ref, watch } from 'vue';
 import api from '../common/api';
 import { useRoute} from "vue-router"
+import ButtonBase from './ButtonBase.vue';
+import { addIcon, removeIcon } from '../main';
+import InputBase from './InputBase.vue';
 
 const currentMode = ref('')
 const amount = ref('')
@@ -162,6 +166,21 @@ watch(() => route.params.id, () => {
     flex-direction: column;
     width: 60%;
     font-size: 32px;
+}
+
+.info-container .action-container .amount-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.amount-container button{
+    padding: 0.5rem;
+}
+
+.info-container .action-container .button-group {
+    display: flex;
+    gap: 0.25rem;
 }
 
 .balance-container {
