@@ -31,12 +31,9 @@ input {
     width: 100%;
     outline: 0;
     border: 2px solid #1f1f1f;
-    padding: 0.5rem 0;
     text-indent: 0.5rem;
-
     box-sizing: border-box;
     border-radius: 8px;
-    font-size: 18px;
     transition: all 0.2s;
 }
 
