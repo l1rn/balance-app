@@ -26,6 +26,7 @@ type User struct {
 type UserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Balance  int64  `json:"balance;default:0"`
 	Role     Role   `json:"role"`
 }
 

@@ -20,7 +20,7 @@ func main() {
 		log.Fatal("Error loading .env file! Check if it exists")
 	}
 	db, err := gorm.Open(
-		sqlite.Open("db/data.db"),
+		sqlite.Open("db/data1.db"),
 		&gorm.Config{},
 	)
 

@@ -2,3 +2,4 @@
 *.swo
 db/data.db
 .env
+db/data1.db

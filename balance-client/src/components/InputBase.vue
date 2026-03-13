@@ -1,9 +1,21 @@
 <template>
-    <div class="input-wrapper">
+    <div class="input-base">
         <input 
+        v-bind="$attrs"
         v-model="localValue" 
         :type="props.type"
-        :placeholder="props.placeholder">
+        :readonly="props.type === 'list'"
+        :placeholder="props.placeholder"
+        :class="{'selector-mode': props.type === 'list'}">
+        <template v-if="props.type === 'list' && props.items">
+            <div class="list-container">
+                <ul>
+                    <li v-for="i in props.items">
+                        {{ i }}
+                    </li>
+                </ul>
+            </div>
+        </template>
     </div>
 </template>
 
@@ -13,10 +25,13 @@ const props = defineProps({
   type: {
     type: String,
     default: "text",
-    validator: (value) => ["text", "password"].includes(value)
+    validator: (value) => ["text", "password", "list"].includes(value)
   },
   placeholder: {
     type: String
+  },
+  items: {
+    type: Array
   }
 })
 
@@ -38,7 +53,16 @@ input {
 }
 
 input:focus {
-    border: 2px solid #323036;
+    border: 2px solid #535353;
 }
 
+.selector-mode {
+    background: #535353;
+    cursor: pointer;
+    border: 2px solid #535353;
+}
+
+.list-container {
+    
+}
 </style>

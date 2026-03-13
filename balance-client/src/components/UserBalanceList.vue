@@ -13,7 +13,7 @@
                 v-for="u in users"
                 :key="u.id">
                     <template
-                    v-if="u.username.length > 0">
+                    v-if="u.id !== 0">
                         <td>{{ u.id }}</td>
                         <td>{{ u.username }}</td>
                         <td>{{ u.role }}</td>
@@ -21,62 +21,94 @@
                         <td
                         v-if="u.username.length > 0" 
                         class="action-cell">
-                            <ButtonBase :icon="addIcon"/>
-                            <ButtonBase :icon="removeIcon" />
-                            <ButtonBase 
-                            @click="$router.push(`/users/${u.id}`)" 
-                            :icon="userIcon"/>
+                            <div class="action-wrapper">
+                                <ButtonBase :icon="addIcon"/>
+                                <ButtonBase :icon="removeIcon" />
+                                <ButtonBase 
+                                @click="$router.push(`/users/${u.id}`)" 
+                                :icon="userIcon"/>
+                            </div>
                         </td>
                     </template>
                     <template
                     v-else>
-                        <td>
-                            <InputBase
-                            placeholder="id" 
-                            v-model="userRequest.id"/>
+                        <td colspan="2">
+                            <div class="input-container">
+                                <span>
+                                    <b>👤 user:</b>
+                                </span>
+                                <InputBase 
+                                class="table-input"
+                                placeholder="username" 
+                                v-model="userRequest.username"/>
+                                <span>
+                                    <b>🔒 password:</b>
+                                </span>
+                                <InputBase
+                                class="table-input"
+                                placeholder="password" 
+                                v-model="userRequest.password"/>
+                            </div>
                         </td>
-                        <td>
-                            <InputBase placeholder="username" v-model="userRequest.username"/>
-                            <InputBase placeholder="password" v-model="userRequest.password"/>
+                        <td colspan="2">
+                            <div class="input-container">
+                                <span>
+                                    <b>🧩 role:</b>
+                                </span>
+                                <InputBase 
+                                class="table-input"
+                                placeholder="role" 
+                                type="list"
+                                :items="roleList"
+                                v-model="userRequest.role"/>
+                                <span>
+                                    <b>💸 balance:</b>
+                                </span>
+                                <InputBase 
+                                class="table-input"
+                                placeholder="balance" 
+                                v-model="userRequest.balance"/>
+                            </div>
                         </td>
-                        <td>
-                            <InputBase placeholder="role" v-model="userRequest.role"/>
-                        </td>
-                        <td>
-                            <InputBase placeholder="balance" v-model="userRequest.balance"/>
-                        </td>
-                        <td class="action-cell">
-                            <ButtonBase
-                            @click="handleCreateUser"
-                            title="confirm"/>
+                        <td 
+                        colspan="1"
+                        class="action-cell">
+                            <div class="action-wrapper confirm-button">
+                                <ButtonBase
+                                    @click="handleCreateUser"
+                                    :icon="confirmIcon"
+                                />
+                            </div>
                         </td>
                     </template>
                 </tr>
             </table>
         </div>
         <div class="button-content">
-            <ButtonBase 
-            @click="users.push(userRequest)"
-            :icon="addIcon"/>
+            <div class="button-wrapper">
+                <ButtonBase 
+                @click="users.push(userRequest)"
+                :icon="addIcon"/>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
 import ButtonBase from './ButtonBase.vue';
-import { onMounted, ref } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import api from '../common/api';
-import { addIcon, removeIcon, userIcon } from '../main';
+import { addIcon, confirmIcon, removeIcon, userIcon } from '../main';
 import InputBase from './InputBase.vue';
 
 const roleList = ["user", "admin"]
 
 const users = ref([])
-const userRequest = ref({
+const userRequest = reactive({
     "id": 0,
     "username": "",
     "password": "",
-    "balance": 0,
+    "balance": null,
     "role": "user"
 })
 
@@ -113,7 +145,7 @@ onMounted(() => handleAllUsers())
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    gap:0.5rem;
+    gap: 0.5rem;
 }
 
 .table-content {
@@ -124,6 +156,12 @@ onMounted(() => handleAllUsers())
 
 .button-content {
     width: 80%;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.confirm-button :deep(button) {
+    padding: 16px;
 }
 
 table {
@@ -147,11 +185,44 @@ tr td {
 }
 
 .action-cell {
+    text-align: center;
+}
+
+.action-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 0.25rem;
+    width: 100%;
+    height: 100%;
 }
+
+.confirm-button :deep(button){
+    padding: 8px;
+}
+
+td .input-container span {
+    display: flex;
+    align-self: flex-start;
+    width: 65%;
+}
+
+td .input-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+}
+
+td .table-input {
+    width: 100%; 
+}
+
+td .table-input :deep(input) {
+    padding: 8px;
+}
+
 tr:first-child td:first-child {
     border-radius: 8px 0 0 0;
 }
@@ -164,5 +235,27 @@ tr:last-child td:first-child {
 }
 tr:last-child td:last-child {
     border-radius: 0 0 8px 0;
+}
+
+@media (max-width: 768px) {
+    table, .button-content {
+        width: 100%;
+    }
+
+    table {
+        min-width: 600px; 
+    }
+
+    .table-content {
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: auto; 
+        justify-content: flex-start;
+        padding-bottom: 0.5rem; 
+    }
+
+    tr td {
+        padding: 0.4rem 0.5rem;
+    }
 }
 </style>

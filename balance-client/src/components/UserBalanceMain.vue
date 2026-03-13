@@ -246,7 +246,7 @@ tr:last-child td:last-child {
     border-radius: 0 0 8px 0;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 200px) {
     .main-container{
         display: flex;
         flex-direction: column;

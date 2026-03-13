@@ -5,14 +5,14 @@
         </div>
         <div class="button-container">
             <ButtonBase 
-            title="Quit"
+            :icon="logoutIcon"
             @click="logoutHandle"/>
         </div>
     </div>
 </template>
 
 <script setup>
-import api from '../common/api';
+import { logoutIcon } from '../main';
 import { useAuthStore } from '../store/authStore';
 import ButtonBase from './ButtonBase.vue';
 
