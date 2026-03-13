@@ -87,7 +87,7 @@
         <div class="button-content">
             <div class="button-wrapper">
                 <ButtonBase 
-                @click="users.push(userRequest)"
+                @click="addUserRow"
                 :icon="addIcon"/>
             </div>
         </div>
@@ -122,14 +122,37 @@ const handleAllUsers = async() => {
     }
 }
 
+const addUserRow = () => {
+    const alreadyAdding = users.value.some(u => u.id === 0);
+    
+    if (!alreadyAdding) {
+        users.value.push(userRequest);
+    } else {
+        alert("You are already adding a user! Fill out the current row first. ✋");
+    }
+}
+
 const handleCreateUser = async() => {
     try {
+        console.log(userRequest)
         const response = await api.post("/admin/create-user", {
-            "username": userRequest.value.username,
-            "password": userRequest.value.password,
-            "balance": userRequest.value.balance,
-            "role": userRequest.value.role,
+            "username": userRequest.username,
+            "password": userRequest.password,
+            "balance": userRequest.balance,
+            "role": userRequest.role,
         })
+
+        if (response.status === 200 || response.status === 201) {
+            await handleAllUsers();
+            
+            Object.assign(userRequest, {
+                id: 0,
+                username: "",
+                password: "",
+                balance: null,
+                role: "user"
+            });
+        }
     } catch(e){
         console.error(e)
     }

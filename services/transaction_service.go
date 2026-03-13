@@ -11,6 +11,7 @@ type TransactionType string
 const (
 	TopUp    TransactionType = "top-up"
 	Withdraw TransactionType = "withdraw"
+	Change TransactionType = "change"
 )
 
 type TransactionItem struct {

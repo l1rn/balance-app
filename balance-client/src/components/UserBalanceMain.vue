@@ -23,7 +23,9 @@
                             @click="setMode('minus')"
                             :class="{ active: currentMode === 'minus'}"
                         />
-                        <ButtonBase title="edit"/>
+                        <ButtonBase
+                            :icon="editIcon"
+                        />
                     </div>
                     <div v-if="currentMode" class="amount-container">
                         <InputBase type="text" v-model="amount"/>
@@ -70,7 +72,7 @@ import { onMounted, ref, watch } from 'vue';
 import api from '../common/api';
 import { useRoute} from "vue-router"
 import ButtonBase from './ButtonBase.vue';
-import { addIcon, removeIcon } from '../main';
+import { addIcon, editIcon, removeIcon } from '../main';
 import InputBase from './InputBase.vue';
 
 const currentMode = ref('')

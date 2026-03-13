@@ -82,6 +82,7 @@ func main() {
 			ctx.SetCookie("token", token, 3600*24, "/", "", true, true)
 		})
 		admin := api.Group("/admin")
+		user := api.Group("/user")
 		admin.Use(controllers.AuthMiddleware("admin"))
 		{
 			admin.GET("/all-users", userCtrl.GetAllUsers)
@@ -89,8 +90,8 @@ func main() {
 			admin.POST("/create-user", userCtrl.CreateUser)
 			admin.POST("/top-up", userCtrl.TopUpBalance)
 			admin.POST("/withdraw", userCtrl.WithdrawBalance)
-
-			admin.GET("/users/:id", transactionCtrl.GetUserHistory)
+			admin.POST("/change-balance", userCtrl.ChangeBalance)
+			user.GET("/users/:id", transactionCtrl.GetUserHistory)
 		}
 	}
 

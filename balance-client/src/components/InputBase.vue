@@ -1,25 +1,34 @@
 <template>
     <div class="input-base">
         <input 
-        v-bind="$attrs"
-        v-model="localValue" 
-        :type="props.type"
-        :readonly="props.type === 'list'"
-        :placeholder="props.placeholder"
-        :class="{'selector-mode': props.type === 'list'}">
-        <template v-if="props.type === 'list' && props.items">
-            <div class="list-container">
-                <ul>
-                    <li v-for="i in props.items">
-                        {{ i }}
-                    </li>
-                </ul>
-            </div>
-        </template>
+            v-bind="$attrs"
+            v-model="localValue" 
+            :type="props.type === 'list' ? 'text' : props.type"
+            :readonly="props.type === 'list'"
+            @click="isOpen = !isOpen"
+            @blur="isOpen = false" 
+            :placeholder="props.placeholder"
+            :class="{'selector-mode': props.type === 'list'}"
+        >
+        
+        <div v-if="props.type === 'list' && props.items && isOpen" class="list-container">
+            <ul>
+                <li v-for="i in props.items" :key="i" @mousedown="selectItem(i)">
+                    {{ i }}
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
+<script setup>
+import { ref } from 'vue';
 
-<script setup lang="ts">
+const isOpen = ref(false);
+
+const selectItem = (item) => {
+    localValue.value = item; 
+    isOpen.value = false;   
+};
 
 const props = defineProps({
   type: {
@@ -61,8 +70,38 @@ input:focus {
     cursor: pointer;
     border: 2px solid #535353;
 }
-
+.input-base {
+    position: relative;
+    width: 100%;
+}
 .list-container {
-    
+    position: absolute;
+    top: 105%; 
+    left: 0;
+    width: 100%;
+    background: #323036;
+    border: 2px solid #535353;
+    box-sizing: border-box;
+    border-radius: 8px;
+    z-index: 999; 
+    overflow: hidden;
+}
+
+.list-container ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.list-container ul li {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: left;
+    color: white;
+}
+
+.list-container ul li:hover {
+    background: #535353; 
 }
 </style>

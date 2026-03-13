@@ -26,6 +26,10 @@ func (ctrl *UserController) GetAllUsers(ctx *gin.Context) {
 	ctx.JSON(200, users)
 }
 
+func (ctrl *UserController) GetUserByUsername(ctx *gin.Context) {
+	user
+}
+
 func (ctrl *UserController) TopUpBalance(ctx *gin.Context) {
 	var req services.TopUpRequest
 	if err := ctx.ShouldBindBodyWithJSON(&req); err != nil {
@@ -68,11 +72,41 @@ func (ctrl *UserController) WithdrawBalance(ctx *gin.Context) {
 	})
 }
 
+
+func (ctrl *UserController) ChangeBalance(ctx *gin.Context) {
+	var req services.TopUpRequest
+	if err := ctx.ShouldBindBodyWithJSON(&req); err != nil {
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	err := ctrl.userService.ChangeBalanceByUserId(req.UserId, req.Amount)
+	if err != nil {
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(200, gin.H{
+		"message": "Balance was updated",
+	})
+}
+
 func (ctrl *UserController) CreateUser(ctx *gin.Context) {
 	var input services.UserRequest
 	if err := ctx.ShouldBindBodyWithJSON(&input); err != nil {
 		ctx.JSON(400, gin.H{
 			"error": err.Error(),
+		})
+		return
+	}
+
+	if len(input.Username) <= 5 {
+		ctx.JSON(400, gin.H{
+			"error": "Username length should be more than 5",
 		})
 		return
 	}

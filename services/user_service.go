@@ -47,7 +47,9 @@ type TopUpRequest struct {
 type UserService interface {
 	FindAll() ([]UserResponse, error)
 	FindById(id uint) (*User, error)
+	FindByUsername(username string) (*User, error)
 	TopUpBalanceByUserId(userId uint, amount int64) error
+	ChangeBalanceByUserId(userId uint, amount int64) error
 	WithdrawBalanceByUserId(userId uint, amount int64) error
 	CheckBalance(userId uint) (*int64, error)
 	AddUser(req UserRequest) error
@@ -82,6 +84,15 @@ func (s *userService) FindAll() ([]UserResponse, error) {
 func (s *userService) FindById(id uint) (*User, error) {
 	var user User
 	err := s.db.First(&user, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (s *userService) FindByUsername(username string) (*User, error){
+	var user User
+	err := s.db.First(&user, username).Error
 	if err != nil {
 		return nil, err
 	}
@@ -138,6 +149,30 @@ func (s *userService) WithdrawBalanceByUserId(id uint, amount int64) error {
 			UserID: id,
 			Amount: amount,
 			Type:   Withdraw,
+		}
+
+		if err := tx.Create(&transaction).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
+
+func (s *userService) ChangeBalanceByUserId(userId uint, amount int64) error {
+	return s.db.Transaction(func(tx *gorm.DB) error {
+		var user User
+		if err := tx.First(&user, userId).Error; err != nil{
+			return err
+		}
+
+		if err := tx.Model(&user).Update("balance", amount).Error; err != nil {
+			return err
+		}
+
+		transaction := TransactionItem{
+			UserID: user.ID,
+			Amount: amount,
+			Type: Change,
 		}
 
 		if err := tx.Create(&transaction).Error; err != nil {
