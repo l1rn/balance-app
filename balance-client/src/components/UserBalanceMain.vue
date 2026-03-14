@@ -3,13 +3,13 @@
         <div class="main-container">
             <div class="info-container">
                 <div class="id">
-                    ID: {{ user.id }}
+                    🆔 ID: {{ user.id }}
                 </div>
                 <div class="username">
-                    User: {{ user.username }}
+                    👤 User: {{ user.username }}
                 </div>
                 <div class="role">
-                    Role: {{ user.role }}
+                    🧩 Role: {{ user.role }}
                 </div>
                 <div class="action-container">
                     <div class="button-group">
@@ -25,12 +25,17 @@
                         />
                         <ButtonBase
                             :icon="editIcon"
+                            @click="setMode('change')"
+                            :class="{ active: currentMode === 'change'}"
                         />
                     </div>
                     <div v-if="currentMode" class="amount-container">
-                        <InputBase type="text" v-model="amount"/>
+                        <InputBase 
+                        class="input-container"
+                        :placeholder="getMode(currentMode)"
+                        type="text" v-model="amount"/>
                         <ButtonBase 
-                            :title="currentMode === 'plus' ? 'Add Funds' : 'Withdraw'"
+                            :icon="confirmIcon"
                             @click="handleConfirm"  
                         />
                     </div>
@@ -54,7 +59,17 @@
                 v-for="t in user.transactions">
                     <td>{{ t.username }}</td>
                     <td>{{ t.amount }}</td>
-                    <td>{{ t.type }}</td>
+                    <td>
+                        <span v-if="t.type === 'top-up'">
+                            <img :src="addGreenIcon" alt="">
+                        </span>
+                        <span v-else-if="t.type === 'withdraw'">
+                            <img :src="removeRedIcon" alt="">
+                        </span>
+                        <span v-else-if="t.type === 'change'">
+                            <img :src="changeIcon" alt="">
+                        </span>
+                    </td>
                     <td class="time-cell">
                         {{ t.created_at.split("T")[1].split(".")[0] }}
                         <div class="date">
@@ -72,7 +87,7 @@ import { onMounted, ref, watch } from 'vue';
 import api from '../common/api';
 import { useRoute} from "vue-router"
 import ButtonBase from './ButtonBase.vue';
-import { addIcon, editIcon, removeIcon } from '../main';
+import { addGreenIcon, addIcon, changeIcon, confirmIcon, editIcon, removeIcon, removeRedIcon } from '../main';
 import InputBase from './InputBase.vue';
 
 const currentMode = ref('')
@@ -83,6 +98,18 @@ const setMode = (mode) => {
         currentMode.value = ''
     } else {
         currentMode.value = mode
+    }
+}
+
+const getMode = (mode) => {
+    if(mode === 'plus') {
+        return "add funds"
+    }
+    else if (mode === 'minus'){
+        return "withdraw"
+    }
+    else if (mode === 'change') {
+        return "change the balance"
     }
 }
 
@@ -97,7 +124,7 @@ const user = ref({
 
 const transactionsHandle = async() => {
     try {
-        const response = await api.get(`/admin/users/${route.params.id}`)
+        const response = await api.get(`/users/transactions/${route.params.id}`)
         user.value = response.data
     } catch(e){
         console.error(e)
@@ -126,11 +153,23 @@ const withdrawHandle = async() => {
     }
 }
 
+const changeBalanceHandle = async() => {
+    try {
+        const response = await api.post('/admin/change-balance', {
+            user_id: user.value.id,
+            amount: Number(amount.value),
+        })
+    } catch(e){
+        console.error(e)
+    }
+}
+
 const handleConfirm = async() => {
-    if(amount.value <= 0) return alert("Enter a valid number")
+    if(amount.value < 0) return alert("Enter a valid number")
     if(currentMode.value === 'plus') await topupHandle()
     else if(currentMode.value === 'minus') await withdrawHandle()
-
+    else if (currentMode.value === 'change') await changeBalanceHandle()
+    
     amount.value = 0
     currentMode.value = ''
     await transactionsHandle()
@@ -170,19 +209,38 @@ watch(() => route.params.id, () => {
     font-size: 32px;
 }
 
-.info-container .action-container .amount-container {
+.amount-container {
     display: flex;
+    justify-content: center;
     align-items: center;
     gap: 1rem;
+    padding: 0.5rem 0;
 }
 
-.amount-container button{
+.action-container .input-container { 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.amount-container :deep(input) {
+    padding: 0.5rem;
+}
+
+.amount-container :deep(button){
     padding: 0.5rem;
 }
 
 .info-container .action-container .button-group {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+}
+
+.button-group .active :deep(button) {
+    background: #222121;
+    border: 2px solid #666666;
 }
 
 .balance-container {

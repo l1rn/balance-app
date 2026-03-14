@@ -3,7 +3,9 @@
         <div class="header-container">
             <h1 @click="$router.push('/main')">Balance Handler 💸</h1>
         </div>
-        <div class="button-container">
+        <div
+        v-if="authStore.isAuthenticated" 
+        class="button-container">
             <ButtonBase 
             :icon="logoutIcon"
             @click="logoutHandle"/>
@@ -12,13 +14,18 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
 import { logoutIcon } from '../main';
 import { useAuthStore } from '../store/authStore';
 import ButtonBase from './ButtonBase.vue';
+import api from '../common/api';
 
+const router = useRouter()
 const authStore = useAuthStore()
-const logoutHandle = () => {
-    document.cookie = "token=null; max-age=0; path=/;"
+const logoutHandle = async() => {
+    await api.post("/auth/logout", { method: "POST", credentials: "include" })
+    authStore.setAuthorization(false)
+    window.location.assign("/login")
 }
 </script>
 

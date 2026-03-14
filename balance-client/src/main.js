@@ -10,6 +10,9 @@ export { default as userIcon } from "./assets/user.svg"
 export { default as confirmIcon } from "./assets/confirm.svg"
 export { default as logoutIcon } from "./assets/logout.svg"
 export { default as editIcon } from "./assets/edit.svg"
+export { default as addGreenIcon } from "./assets/add-green.svg"
+export { default as removeRedIcon } from "./assets/remove-red.svg"
+export { default as changeIcon } from "./assets/change.svg"
 
 const app = createApp(App)
 const pinia = createPinia()

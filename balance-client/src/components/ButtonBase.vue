@@ -32,6 +32,8 @@ div button {
     justify-content: center;
     background: #3d3d3d;
     transition: all 0.3s ease;
+    border: 2px solid transparent;
+    box-sizing: border-box;
 
 }
 

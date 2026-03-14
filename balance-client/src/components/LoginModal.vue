@@ -4,7 +4,7 @@
         <div class="input-container">
             <div class="input-group">
                 <div>
-                    Username
+                    👤 Username
                 </div>
                 <InputBase 
                 type="text" 
@@ -13,7 +13,7 @@
             </div>
             <div class="input-group">
                 <div>
-                    Password
+                    🔒 Password
                 </div>
                 <InputBase 
                 type="password" 
@@ -51,6 +51,7 @@ const loginHandle = async() => {
 }
 </script>
 <style scoped>
+
 .input-wrapper {
     display: flex;
     justify-content: center;
@@ -58,6 +59,7 @@ const loginHandle = async() => {
     align-items: center;
     width: 100%;
 }
+
 .input-container {
     display: flex;
     flex-direction: column;
@@ -72,6 +74,15 @@ const loginHandle = async() => {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+}
+
+.input-group :deep(input) {
+    padding: 0.5rem 0;
+}
+
+.input-container :deep(button) {
+    width: 100%;
+    font-size: 16px;
 }
 
 .input-group div {
